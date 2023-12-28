@@ -1,0 +1,38 @@
+{
+  "name": "manufacturing-manager-nodejs-backend",
+  "version": "1.0.0",
+  "description": "Manufacturing Manager",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "ts-node build/server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryan-ryanwoolf/manufacturing-manager-nodejs-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryan-ryanwoolf/manufacturing-manager-nodejs-backend/issues"
+  },
+  "homepage": "https://github.com/ryan-ryanwoolf/manufacturing-manager-nodejs-backend#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.5",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1526.0",
+    "body-parser": "^1.20.2",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwk-to-pem": "^2.0.5",
+    "node-fetch": "^3.3.2"
+  }
+}
