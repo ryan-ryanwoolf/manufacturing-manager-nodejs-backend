@@ -12,13 +12,44 @@ class AuthMiddleware {
         this.setUp()
       }
     
-      private verifyToken(req: Request, resp: Response, next): void {
+      private verifyTokenRest(req: Request, resp: Response, next): void {
 
-        console.log(`verify token`);
-        console.log(`headers:${JSON.stringify(req.headers)}`);
         const token = req.header('Auth');
 
         console.log(token)
+        if (!token) {
+            resp.status(401).end();
+            return;
+        }
+        
+    
+        let decodedJwt: any = jwt.decode(token, { complete: true });
+        if (decodedJwt === null) {
+          resp.status(401).end()
+          return
+        }
+        console.log(decodedJwt)
+        let kid = decodedJwt.header.kid;
+        let pem = pems[kid];
+        console.log(pem)
+        if (!pem) {
+          resp.status(401).end()
+          return
+        }
+        jwt.verify(token, pem, function (err: any, payload: any) {
+          if (err) {
+            resp.status(401).end()
+            return
+          } else {
+            next()
+          }
+        })
+      }
+
+      private verifyTokenGraphql(req: Request, resp: Response, next): void {
+
+        const token = req.header('Auth');
+
         if (!token) {
             resp.status(401).end();
             return;
@@ -58,6 +89,7 @@ class AuthMiddleware {
           }
           const data = await response.json();
           console.log(`data:${JSON.stringify(data)}`);
+          //@ts-ignore
           const { keys } = data;
             console.log(`keys.length: ${keys.length}`);
             for (let i = 0; i < keys.length; i++) {

@@ -14,7 +14,7 @@ class ProtectedController {
     }
 
     private initRoutes(){
-        this.router.use(this.authMiddleware.verifyToken);
+        this.router.use(this.authMiddleware.verifyTokenRest);
         this.router.get('/secret',this.protected);
     }
 

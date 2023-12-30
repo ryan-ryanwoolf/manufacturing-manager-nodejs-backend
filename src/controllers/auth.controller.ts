@@ -16,6 +16,7 @@ class AuthController {
         this.router.post('/signUp',this.validateBody("signUp"),this.signUp);
         this.router.post('/signIn',this.validateBody("signIn"),this.signIn);
         this.router.post('/verify',this.validateBody("verify"),this.verify);
+        this.router.get('/getUserAttributes',this.validateBody("getUserAttributes"),this.getUserAttributes);
 
         console.log(`initialized routes`);
     }
@@ -98,6 +99,15 @@ class AuthController {
         return res.status(200).end();
     }
 
+    getUserAttributes(req: Request, res: Response){
+        console.log(`in getUserAttributes`)
+        const token = req.header('Auth')
+        const cognito = new CognitoService();
+        cognito.getUserInfo(token).then((data) => {
+            res.status(200).json(data).end();
+        });
+    }
+
     private validateBody(type: string){
         switch(type){
             case 'signUp':
@@ -120,6 +130,8 @@ class AuthController {
                     body('username').notEmpty().isLength({min:6}),
                     body('code').isString().isLength({min:6, max:6}),
                 ]
+            case 'getUserAttributes':
+                return [] 
         }
     }
 }

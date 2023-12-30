@@ -76,6 +76,22 @@ class CognitoService {
         
     }
 
+    public async getUserInfo(token:string): Promise<any>{
+        const params = {
+            AccessToken: token
+        }
+        try{
+            const data = await this.cognitoIdentity.getUser(params).promise();
+            console.log(data);
+            return data;
+        }
+        catch(error){
+            console.log(error);
+            return false;
+        }
+        
+    }
+
     private generateHash(username: string): string {
         return crypto.createHmac('SHA256',this.secretHash)
         .update(username + this.clientId)

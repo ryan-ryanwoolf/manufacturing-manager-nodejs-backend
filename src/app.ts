@@ -1,10 +1,21 @@
+
+import { ApolloServer } from 'apollo-server-express';
 import express from 'express'
 import { Application } from 'express'
+import {
+    ApolloServerPluginLandingPageGraphQLPlayground,
+    ApolloServerPluginLandingPageProductionDefault,
+  } from "apollo-server-core";
+
+import { resolvers } from './resolvers';
+import UserResolver from 'resolvers/user.resolver';
+import { buildSchema } from 'type-graphql';
 
 class App {
     public app: Application
     public port: number
-
+    schema;
+    server: ApolloServer;
     constructor(appInit: { port: number; middleWares: any; controllers: any; }) {
         this.app = express()
         this.port = appInit.port
@@ -25,9 +36,54 @@ class App {
         })
     }
 
-    public listen() {
+    private async buildApolloSchema(){
+        
+
+        console.log(`done building schema`);
+    }
+
+    private async initializeApolloServer(){
+
+        console.log(`about to initialize apollo server`)
+
+        const schema = await buildSchema({
+            resolvers,
+            // authChecker
+        })
+
+        this.server = new ApolloServer({
+            schema,
+            context: (ctx) =>{
+                return ctx;
+            },
+            plugins: [
+                process.env.NODE_ENV === 'production' ?
+                ApolloServerPluginLandingPageProductionDefault() :
+                ApolloServerPluginLandingPageGraphQLPlayground()
+            ]
+        })
+        console.log(`done initializing apolloserver`);
+
+    }
+
+    private async  startApolloServer(){
+        await this.server.start();
+    }
+
+    private async applyMiddlewareToApolloServer(){
+        this.server.applyMiddleware({app: this.app});
+    }
+
+    public async  listen() {
+        await this.buildApolloSchema();
+        await this.initializeApolloServer();
+        await this.startApolloServer();
+        await this.applyMiddlewareToApolloServer();
+        
         this.app.listen(this.port, () => {
             console.log(`App listening on the http://localhost:${this.port}`)
+
+
         })
     }
 }

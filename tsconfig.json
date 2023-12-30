@@ -1,8 +1,11 @@
 {
     "compilerOptions": {
         "sourceMap": true,
-        "target":"ES6",
-        "module":"CommonJS",
+        "target":"ES2018",
+        "module":"commonjs",
+        "lib":["es2018", "ESNext.AsyncIterable"],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "outDir": "./build",
         "baseUrl": "./src",
         "removeComments": true,
