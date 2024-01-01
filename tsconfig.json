@@ -7,7 +7,7 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "outDir": "./build",
-        "baseUrl": "./src",
+        // "baseUrl": "./src",
         "removeComments": true,
         "incremental": true,
         "esModuleInterop": true

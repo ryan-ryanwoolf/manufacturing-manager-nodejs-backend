@@ -1,6 +1,7 @@
 import express, { Request, Response} from 'express';
 import {body, validationResult} from 'express-validator'
 import CognitoService from '../services/cognito.service';
+import { CreateUserInput, UserModel } from '../schema/user.schema';
 
 
 class AuthController {
@@ -38,8 +39,29 @@ class AuthController {
 
         const cognito = new CognitoService();
         let success = cognito.signUpUser(username,password, userAttr)
-        .then(success => {
+        .then(async success => {
+
+            console.log(`success:${success}`);
             if(success){
+
+                try{
+
+                    console.log(`about to populate CreateUserInput`)
+                    const input:CreateUserInput ={
+                        name: name,
+                        email: email,
+                        familyName: family_name,
+                        birthdate: new Date(birthdate)
+                    }
+                    console.log(`about to create mongodb user`)
+    
+                    const createdUser = await UserModel.create(input)
+                }
+                catch(error)
+                {
+                    res.status(500).end();
+                }
+                
                 res.status(200).end();
             }
             else
@@ -52,7 +74,7 @@ class AuthController {
         return res.status(200).end();
     }
 
-    signIn(req:Request, res: Response){
+    async signIn(req:Request, res: Response){
         const result = validationResult(req);
         if(!result.isEmpty){
             return res.status(422).json({errors: result.array()});
@@ -61,18 +83,18 @@ class AuthController {
         const { username, password } = req.body;
 
         const cognito = new CognitoService();
-        cognito.signInUser(username, password)
-        .then(success => {
-            if(success){
-                res.status(200).end()
+        await cognito.signInUser(username, password)
+        .then(response => {
+            if(response.success){
+                res.status(200).json(response).end()
             }
             else
             {
                 res.status(500).end();
             }
+        }).catch(err =>{
+            res.status(500).end();
         })
-
-        return res.status(200).end();
     }
 
     verify(req:Request, res: Response){

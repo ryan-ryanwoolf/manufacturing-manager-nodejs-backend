@@ -8,8 +8,11 @@ import {
   } from "apollo-server-core";
 
 import { resolvers } from './resolvers';
-import UserResolver from 'resolvers/user.resolver';
 import { buildSchema } from 'type-graphql';
+import { connectToMongo } from './utils/mongo';
+import AuthMiddleware from './middleware/auth.middleware';
+import Context from './types/context';
+import authChecker from './utils/authChecker';
 
 class App {
     public app: Application
@@ -48,12 +51,13 @@ class App {
 
         const schema = await buildSchema({
             resolvers,
-            // authChecker
+            validate: { forbidUnknownValues: false }, 
+            authChecker
         })
 
         this.server = new ApolloServer({
             schema,
-            context: (ctx) =>{
+            context: async (ctx: Context) =>{
                 return ctx;
             },
             plugins: [
@@ -80,9 +84,9 @@ class App {
         await this.startApolloServer();
         await this.applyMiddlewareToApolloServer();
         
-        this.app.listen(this.port, () => {
+        this.app.listen(this.port, async () => {
             console.log(`App listening on the http://localhost:${this.port}`)
-
+            await connectToMongo();
 
         })
     }

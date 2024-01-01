@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import crypto from 'crypto'
+import SignInUserResponse from '../types/signInUserResponse';
 
 class CognitoService {
     private config = {
@@ -14,7 +15,7 @@ class CognitoService {
     }
 
     public async signUpUser(username:string, password:string, userAttr: Array<any>): Promise<boolean>{
-        console.log(`clientId:${this.clientId}`);
+    
         const params = {
             ClientId:this.clientId,
             Password:password,
@@ -25,7 +26,6 @@ class CognitoService {
 
         try{
             const data = await this.cognitoIdentity.signUp(params).promise();
-            console.log(data);
             return true;
         }
         catch(error)
@@ -44,8 +44,9 @@ class CognitoService {
         }
 
         try{
+
+            console.log(`${JSON.stringify(params)}`);
             const data = await this.cognitoIdentity.confirmSignUp(params).promise();
-            console.log(data);
             return true;
         }catch(error){
             console.log(error);
@@ -53,7 +54,7 @@ class CognitoService {
         }
     }
 
-    public async signInUser(username:string, password:string): Promise<boolean>{
+    public async signInUser(username:string, password:string): Promise<SignInUserResponse>{
         const params = {
             AuthFlow: 'USER_PASSWORD_AUTH',
             ClientId: this.clientId,
@@ -66,12 +67,18 @@ class CognitoService {
         }
         try{
             const data = await this.cognitoIdentity.initiateAuth(params).promise();
-            console.log(data);
-            return true;
+            console.log(`data: ${JSON.stringify(data.AuthenticationResult.AccessToken)}`);
+            return {
+                success:true,
+                accessToken: data.AuthenticationResult.AccessToken
+            };
         }
         catch(error){
             console.log(error);
-            return false;
+            return {
+                success:false,
+                accessToken: ""
+            };
         }
         
     }
@@ -82,7 +89,6 @@ class CognitoService {
         }
         try{
             const data = await this.cognitoIdentity.getUser(params).promise();
-            console.log(data);
             return data;
         }
         catch(error){
