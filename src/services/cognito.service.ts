@@ -89,6 +89,7 @@ class CognitoService {
         }
         try{
             const data = await this.cognitoIdentity.getUser(params).promise();
+            console.log("\n\n - data",data);
             return data;
         }
         catch(error){

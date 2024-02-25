@@ -7,14 +7,16 @@ import { User, UserModel } from "../schema/user.schema";
 const authChecker: AuthChecker<Context> = async ({ context }) =>{
     console.log(`in auth checker`)
     console.log(`auth header:${JSON.stringify(context.req.headers)}`)
-    if(context.req.headers.auth){
-        console.log(`token:${context.req.headers.auth}`);
-        const authToken:string = context.req.headers.auth as string;
+    if(context.req.headers.authorization){
+        console.log(`token:${context.req.headers.authorization}`);
+        const authToken:string = context.req.headers.authorization as string;
         
         const cognito = new CognitoService();
         console.log(`checking auth header`);
         const userInfo =await cognito.getUserInfo(authToken);
         const userAttributes = userInfo.UserAttributes;
+
+        console.log(`userAttributes:${JSON.stringify(userInfo.UserAttributes)}`)
         let emailValue;
 
         for (const attribute of userAttributes) {
@@ -34,6 +36,4 @@ const authChecker: AuthChecker<Context> = async ({ context }) =>{
 }
 
 export default authChecker;
-
-console.log(`establishing context`);
 

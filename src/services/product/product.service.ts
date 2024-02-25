@@ -1,4 +1,4 @@
-import { CreateProductInput, GetProductInput, ProductModel } from "../schema/product.schema";
+import { CreateProductInput, GetProductInput, ProductModel } from "../../schema/product.schema";
 
 class ProductService {
 

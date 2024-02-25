@@ -1,5 +1,5 @@
 import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
-import ProductService from "../services/product.service";
+import ProductService from "../services/product/product.service";
 import { CreateProductInput, GetProductInput, Product } from "../schema/product.schema";
 import Context from "../types/context";
 
